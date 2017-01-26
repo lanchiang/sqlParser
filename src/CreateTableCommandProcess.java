@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Lan Jiang
@@ -8,54 +10,41 @@ import java.util.*;
  */
 public class CreateTableCommandProcess extends CommandProcess {
 
-    private Map<String, Set<String>> table_columns;
+    public Map<String, Map<String, String>> getTable_columns() {
+        return table_columns;
+    }
+
+    private Map<String, Map<String, String>> table_columns;
 
     @Override
-    public void commandParse(String[] spilttedByComma) {
+    public void commandParse(String piece) {
         if (table_columns==null) {
             table_columns = new HashMap<>();
         }
-        String[] info = spilttedByComma[0].trim().split(" ");
-        String tableName = info[2]; // first "CREATE", second "TABLE"
-        table_columns.putIfAbsent(tableName, new HashSet<>());
+        Pattern pattern = Pattern.compile("CREATE TABLE .*\\s");
+        Matcher matcher = pattern.matcher(piece);
+        String tableName = "";
+        while (matcher.find()) {
+            tableName = matcher.group().split(" ")[2];
+        }
+        if (tableName.equals(""))
+            return;
+        table_columns.putIfAbsent(tableName, new HashMap<>());
+        pattern = Pattern.compile("\\(.*\\)");
+        matcher = pattern.matcher(piece);
+        String innerInfo = "";
+        while (matcher.find()) {
+            innerInfo = matcher.group().trim();
+            innerInfo = innerInfo.substring(1, innerInfo.length()-1);
+        }
 
         int count = 0;
-        for (String piece : spilttedByComma) {
-            piece = piece.trim();
-            if (!LineJudge.isStartCheck(piece)&&!LineJudge.isStartConstraint(piece)) {
-                table_columns.get(tableName).add("column"+count++);
+        for (String column : innerInfo.split(",")) {
+            column = column.trim();
+            if (!LineJudge.isStartCheck(column)&&!LineJudge.isStartConstraint(column)) {
+                column = column.replaceAll(" +", " ");
+                table_columns.get(tableName).putIfAbsent(column.split(" ")[0], "column"+count++);
             }
-        }
-    }
-
-    private void matchBrackets(BufferedReader bufferedReader, String firstLine) {
-        char c;
-        Stack<Character> brackets = new Stack<>();
-        for (Byte b : firstLine.getBytes()) {
-            c = (char)b.byteValue();
-            matchBrackets(brackets, c);
-        }
-        if (brackets.size()==0) return;
-        String line;
-        try {
-            while ((line=bufferedReader.readLine())!=null) {
-                for (Byte b : line.getBytes()) {
-                    c = (char)b.byteValue();
-                    matchBrackets(brackets, c);
-                }
-                if (brackets.size()==0) return;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void matchBrackets(Stack<Character> brackets, char c) {
-        if (c=='(') {
-            brackets.push(c);
-        }
-        if (c==')') {
-            brackets.pop();
         }
     }
 

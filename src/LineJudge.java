@@ -8,22 +8,25 @@ public class LineJudge {
         return line.toUpperCase().contains("CREATE TABLE")?true:false;
     }
 
-    public static boolean isEndCreateTable(String line) {
-        return line.equals(");")?true:false;
-    }
-
     public static boolean isStartCheck(String line) {
         line = line.trim();
         return line.split(" ")[0].toUpperCase().equals("CHECK")?true:false;
-//        return line.toUpperCase().contains("CHECK")?true:false;
     }
 
     public static boolean isStartConstraint(String line) {
+        line = line.trim();
         return line.split(" ")[0].toUpperCase().equals("CONSTRAINT")?true:false;
-//        return line.toUpperCase().contains("CONSTRAINT")?true:false;
     }
 
     public static boolean containAnnotation(String line) {
         return line.contains("--")?true:false;
+    }
+
+    public static boolean isStartAlterTable(String line) {
+        return line.toUpperCase().contains("ALTER TABLE")?true:false;
+    }
+
+    public static boolean isStartWithSet(String line) {
+        return line.toLowerCase().startsWith("\\set")?true:false;
     }
 }

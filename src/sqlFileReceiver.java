@@ -35,11 +35,11 @@ public class SqlFileReceiver {
         try {
             while ((line=sqlFileReader.readLine())!=null) {
                 line = trimWithOneSpace(line);
-                if (line.contains("application")) {
-                    int stop = 0;
-                }
                 if (LineJudge.containAnnotation(line)) {
                     line = removeAnnotation(line);
+                }
+                if (LineJudge.isStartWithSet(line)) {
+                    continue;
                 }
                 longsql += line;
             }

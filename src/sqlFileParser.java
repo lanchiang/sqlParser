@@ -26,28 +26,38 @@ public class SqlFileParser {
         if (sqlFileReader == null) return;
 
         String longsql = sqlFileReceiver.reconstructFile(sqlFileReader);
-        CommandProcess.sqlParse(longsql);
+        SqlFileParser.sqlParse(longsql);
+    }
+
+    public static void sqlParse(String longsql) {
+        String[] splittedByColon = longsql.split(";");
+
+        CommandProcess cp = null;
+        for (String command : splittedByColon) {
+            if (LineJudge.isStartCreateTable(command)) {
+                if (cp == null) {
+                    cp = new CreateTableCommandProcess();
+                }
+                cp.commandParse(command);
+            }
+            else if (LineJudge.isStartAlterTable(command)) {
+                if (cp == null) {
+                    cp = new AlterTableCommandProcess();
+                }
+                cp.commandParse(command);
+            }
+        }
+        return;
     }
 
     public static void main(String[] args) {
-
-//        List<String> matchList = new ArrayList<String>();
-//        Pattern regex = Pattern.compile("\\((.*)\\)");
-//        Matcher regexMatcher = regex.matcher("create table zeit (id INTEGER, CHECK (name != ''))");
-//
-//        while (regexMatcher.find()) {//Finds Matching Pattern in String
-//            matchList.add(regexMatcher.group(0));//Fetching Group from String
-//            matchList.add(regexMatcher.group(1));//Fetching Group from String
-//        }
-//
-//        for(String str:matchList) {
-//            System.out.println(str);
-//        }
 
         SqlFileReceiver srf = new SqlFileReceiver();
         srf.receiveFile(new File("/Users/Fuga/Documents/HPI/musicbrainz-server/admin/sql/CreateTables.sql"));
 
         SqlFileParser sfp = new SqlFileParser();
         sfp.parserFile(srf);
+
+        srf.receiveFile(new File("/Users/Fuga/Documents/HPI/musicbrainz-server/admin/sql/CreateFKConstraints.sql"));
     }
 }
