@@ -7,10 +7,6 @@ public class SqlFileReceiver {
 
     private File sqlFile;
 
-    public SqlFileReceiver() {
-
-    }
-
     public void receiveFile(File file) {
         this.sqlFile = file;
 

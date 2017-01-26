@@ -1,4 +1,5 @@
-import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -9,10 +10,6 @@ import java.util.regex.Pattern;
  * @date 24/01/2017
  */
 public class CreateTableCommandProcess extends CommandProcess {
-
-    public Map<String, Map<String, String>> getTable_columns() {
-        return table_columns;
-    }
 
     private Map<String, Map<String, String>> table_columns;
 
@@ -45,6 +42,25 @@ public class CreateTableCommandProcess extends CommandProcess {
                 column = column.replaceAll(" +", " ");
                 table_columns.get(tableName).putIfAbsent(column.split(" ")[0], "column"+count++);
             }
+        }
+    }
+
+    @Override
+    public void writeToFile() {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter("table_columns.txt"));
+            for (String tableName : table_columns.keySet()) {
+                String columns = "{";
+                for (String columnName : table_columns.get(tableName).keySet()) {
+                    columns += columnName+":"+table_columns.get(tableName).get(columnName)+",";
+                }
+                columns = columns.substring(0,columns.length()-1)+"}";
+                bw.write(tableName+"\t"+columns);
+                bw.newLine();
+            }
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

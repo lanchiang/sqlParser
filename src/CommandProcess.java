@@ -5,4 +5,6 @@
 abstract public class CommandProcess {
 
     abstract public void commandParse(String piece);
+
+    abstract public void writeToFile();
 }
