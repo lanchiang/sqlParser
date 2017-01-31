@@ -12,13 +12,19 @@ public class DriveCode {
     public static void main(String[] args) throws IOException {
 
         SqlFileReceiver srf = new SqlFileReceiver();
-        srf.receiveFile(new File("/Users/Fuga/Documents/HPI/musicbrainz-server/admin/sql/CreateTables.sql"));
+//        File[] files = new File("/Users/Fuga/Documents/HPI/musicbrainz-server/createTable").listFiles();
+//        for (File file : files) {
+//            srf.receiveFile(file);
+//            SqlFileParser sfp = new SqlFileParser();
+//            sfp.parserFile(srf);
+//        }
 
-        SqlFileParser sfp = new SqlFileParser();
-        sfp.parserFile(srf);
-
-        srf.receiveFile(new File("/Users/Fuga/Documents/HPI/musicbrainz-server/admin/sql/CreateFKConstraints.sql"));
-        sfp.parserFile(srf);
+//        files = new File("/Users/Fuga/Documents/HPI/musicbrainz-server/createFK").listFiles();
+//        for (File file : files) {
+//            srf.receiveFile(file);
+//            SqlFileParser sfp = new SqlFileParser();
+//            sfp.parserFile(srf);
+//        }
 
         BufferedReader br = new BufferedReader(new FileReader("table_columns.txt"));
         String line;

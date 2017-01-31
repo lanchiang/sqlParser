@@ -29,4 +29,8 @@ public class LineJudge {
     public static boolean isStartWithSet(String line) {
         return line.toLowerCase().startsWith("\\set")?true:false;
     }
+
+    public static boolean isStartWithSetSearchPath(String line) {
+        return line.toLowerCase().startsWith("set search_path")?true:false;
+    }
 }

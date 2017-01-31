@@ -1,4 +1,6 @@
 import java.io.BufferedReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Lan Jiang
@@ -23,24 +25,31 @@ public class SqlFileParser {
     public static void sqlParse(String longsql) {
         String[] splittedByColon = longsql.split(";");
 
-        CreateTableCommandProcess ctcp = null;
-        AlterTableCommandProcess atcp = null;
+        String search_path = null;
+
+//        CommandProcess cp = new CreateTableCommandProcess();
+        CommandProcess cp = new AlterTableCommandProcess();
         for (String command : splittedByColon) {
-            if (LineJudge.isStartCreateTable(command)) {
-                if (ctcp == null) {
-                    ctcp = new CreateTableCommandProcess();
+            command = command.trim();
+
+            if (LineJudge.isStartWithSetSearchPath(command)) {
+                Pattern pattern = Pattern.compile("SET search_path = '(.*?)'");
+                Matcher matcher = pattern.matcher(command);
+                if (matcher.find()) {
+                    search_path = matcher.group(1);
                 }
-                ctcp.commandParse(command);
             }
-            else if (LineJudge.isStartAlterTable(command)) {
-                if (atcp == null) {
-                    atcp = new AlterTableCommandProcess();
-                }
-                atcp.commandParse(command);
+
+            if (LineJudge.isStartCreateTable(command)||LineJudge.isStartAlterTable(command)) {
+                cp.setSearch_path(search_path);
+
+                cp.commandParse(command);
             }
+//            else if (LineJudge.isStartAlterTable(command)) {
+//                cp.commandParse(command);
+//            }
         }
-        if (ctcp!=null) ctcp.writeToFile();
-        if (atcp!=null) atcp.writeToFile();
+        if (cp!=null) cp.writeToFile();
         return;
     }
 }

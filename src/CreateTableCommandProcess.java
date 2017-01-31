@@ -13,11 +13,25 @@ public class CreateTableCommandProcess extends CommandProcess {
 
     private Map<String, Map<String, String>> table_columns;
 
+    public CreateTableCommandProcess() {
+    }
+
+    private static CreateTableCommandProcess _instance = null;
+
+    public static CreateTableCommandProcess getInstance() {
+        if (_instance==null) {
+            _instance = new CreateTableCommandProcess();
+        }
+        return _instance;
+    }
+
     @Override
     public void commandParse(String piece) {
         if (table_columns==null) {
             table_columns = new HashMap<>();
         }
+
+        // extract the created table name
         Pattern pattern = Pattern.compile("CREATE TABLE .*\\s");
         Matcher matcher = pattern.matcher(piece);
         String tableName = "";
@@ -26,7 +40,12 @@ public class CreateTableCommandProcess extends CommandProcess {
         }
         if (tableName.equals(""))
             return;
+        if (search_path!=null) {
+            tableName = search_path+"."+tableName;
+        }
         table_columns.putIfAbsent(tableName, new HashMap<>());
+
+        // extract the main body of the create table piece
         pattern = Pattern.compile("\\(.*\\)");
         matcher = pattern.matcher(piece);
         String innerInfo = "";
@@ -35,7 +54,8 @@ public class CreateTableCommandProcess extends CommandProcess {
             innerInfo = innerInfo.substring(1, innerInfo.length()-1);
         }
 
-        int count = 0;
+        // load all the columns of the table
+        int count = 1;
         for (String column : innerInfo.split(",")) {
             column = column.trim();
             if (!LineJudge.isStartCheck(column)&&!LineJudge.isStartConstraint(column)) {
@@ -48,7 +68,7 @@ public class CreateTableCommandProcess extends CommandProcess {
     @Override
     public void writeToFile() {
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter("table_columns.txt"));
+            BufferedWriter bw = new BufferedWriter(new FileWriter("table_columns.txt", true));
             for (String tableName : table_columns.keySet()) {
                 String columns = "{";
                 for (String columnName : table_columns.get(tableName).keySet()) {

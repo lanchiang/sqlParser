@@ -27,6 +27,9 @@ public class AlterTableCommandProcess extends CommandProcess {
 
         String[] info = piece.trim().split(" ");
         String tableName = info[2]; // first "alter", second "table"
+        if (search_path!=null) {
+            tableName = search_path+"."+tableName;
+        }
 
         // just for altering foreign key
         Pattern pattern = Pattern.compile("FOREIGN KEY \\(.*?\\)");
@@ -46,6 +49,9 @@ public class AlterTableCommandProcess extends CommandProcess {
         fk = fk.substring(fk.indexOf("(")+1, fk.indexOf(")"));
         ref = ref.split(" ")[1];
         String refTableName = ref.substring(0, ref.indexOf("("));
+        if (refTableName.startsWith("musicbrainz")) {
+            refTableName = refTableName.substring(refTableName.indexOf(".")+1,refTableName.length());
+        }
         String refCol = ref.substring(ref.indexOf("(")+1, ref.indexOf(")"));
         foreignKeyConstraints.add(new ForeignKeyConstraint(tableName,fk,refTableName,refCol));
         return;
@@ -54,7 +60,7 @@ public class AlterTableCommandProcess extends CommandProcess {
     @Override
     public void writeToFile() {
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter("foreignKeyConstraints.txt"));
+            BufferedWriter bw = new BufferedWriter(new FileWriter("foreignKeyConstraints.txt", true));
             for (ForeignKeyConstraint fkc : foreignKeyConstraints) {
                 bw.write(fkc.getRefTable()+":"+fkc.getRefColumn()+"\t"+fkc.getDepTable()+":"+fkc.getDepColumn());
                 bw.newLine();
