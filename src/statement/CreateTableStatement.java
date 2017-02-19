@@ -57,6 +57,7 @@ public class CreateTableStatement extends Statement implements StatementAnalysis
         columnNames = new ArrayList<>();
         Matcher matcher;
         for (String part : content.split(",")) {
+            part = part.trim();
             matcher = primaryKeyPattern.matcher(part);
             // if match, it means this part do not indicate a column.
             if (matcher.find()) {
@@ -64,5 +65,9 @@ public class CreateTableStatement extends Statement implements StatementAnalysis
             }
             columnNames.add(part.split("\\s")[0]);
         }
+    }
+
+    public List<String> getColumnNames() {
+        return columnNames;
     }
 }

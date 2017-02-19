@@ -49,30 +49,4 @@ public class PrimaryKeyOutputTest {
     public void testWriteToFile() throws Exception {
         primaryKeyOutput.writeToFile();
     }
-
-    /**
-     * Method: printTablesInfo()
-     */
-    @Test
-    public void testPrintTablesInfo() throws Exception {
-//TODO: Test goes here... 
-    }
-
-    /**
-     * Method: printColumnsInfo()
-     */
-    @Test
-    public void testPrintColumnsInfo() throws Exception {
-//TODO: Test goes here... 
-    }
-
-    /**
-     * Method: printResultsInfo()
-     */
-    @Test
-    public void testPrintResultsInfo() throws Exception {
-//TODO: Test goes here... 
-    }
-
-
 } 

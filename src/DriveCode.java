@@ -1,12 +1,13 @@
+import output.ForeignKeyOutput;
+import output.PrimaryKeyOutput;
+import statement.AlterTableStatement;
 import statement.CreateTableStatement;
 import statement.Statement;
 import statement.StatementRecognizer;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Lan Jiang
@@ -15,21 +16,32 @@ import java.util.Set;
 public class DriveCode {
     public static void main(String[] args) throws IOException {
 
-        String statement = "CREATE TABLE IMDB.CINEMATOGRAPHERS ( \n" +
-                "       ID INTEGER NOT NULL\n" +
-                "     , NAME VARCHAR(255)\n" +
-                "     , MOVIE VARCHAR(255)\n" +
-                "     , PRIMARY KEY (ID)\n" +
-                ");";
+//        String statement = "CREATE TABLE IMDB.CINEMATOGRAPHERS ( \n" +
+//                "       ID INTEGER NOT NULL\n" +
+//                "     , NAME VARCHAR(255)\n" +
+//                "     , MOVIE VARCHAR(255)\n" +
+//                "     , PRIMARY KEY (ID)\n" +
+//                ");";
 
-        StatementRecognizer statementRecognizer = new StatementRecognizer();
-        Statement sta = statementRecognizer.recognizeTheStatementFunction(statement);
-        if (sta instanceof CreateTableStatement) {
-            CreateTableStatement createTableStatement = ((CreateTableStatement) sta);
-            createTableStatement.analyzeStatement();
+        String inputFilePath = "createImdb-withFKs.sql";
+        StatementAnalysisPool statementAnalysisPool = new StatementAnalysisPool(inputFilePath);
+        statementAnalysisPool.processFile();
+
+        List<CreateTableStatement> createTableStatementList = statementAnalysisPool.getCreateTableStatementList();
+        for (CreateTableStatement createTableStatement : createTableStatementList) {
+            String tableName = createTableStatement.getTableName();
+            PrimaryKeyOutput primaryKeyOutput = new PrimaryKeyOutput(createTableStatement.getColumnNames(),
+                    tableName, createTableStatement.getPrimaryKey(), tableName+"_primaryKey.csv");
+            primaryKeyOutput.writeToFile();
         }
-
-
+        List<AlterTableStatement> alterTableStatementList = statementAnalysisPool.getAlterTableStatementList();
+        List<AlterTableStatement.ForeignKeyPair> foreignKeyPairs = alterTableStatementList.stream()
+                .map(AlterTableStatement::getForeignKeyPair).collect(Collectors.toList());
+        for (AlterTableStatement alterTableStatement : alterTableStatementList) {
+            ForeignKeyOutput foreignKeyOutput = new ForeignKeyOutput(statementAnalysisPool.getSchema(),
+                    foreignKeyPairs, inputFilePath+"_foreignKey.csv");
+            foreignKeyOutput.writeToFile();
+        }
 //        SqlFileReceiver srf = new SqlFileReceiver();
 ////        File[] files = new File("/Users/Fuga/Documents/HPI/musicbrainz-server/createTable").listFiles();
 ////        for (File file : files) {

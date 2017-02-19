@@ -7,9 +7,9 @@ import java.io.IOException;
  */
 public interface OutputHandler {
 
-    abstract public void printTablesInfo() throws IOException;
+    void printTablesInfo() throws IOException;
 
-    abstract public void printColumnsInfo() throws IOException;
+    void printColumnsInfo() throws IOException;
 
-    abstract public void printResultsInfo() throws IOException;
+    void printResultsInfo() throws IOException;
 }
