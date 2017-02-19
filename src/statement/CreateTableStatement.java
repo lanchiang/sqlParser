@@ -15,6 +15,8 @@ public class CreateTableStatement extends Statement implements StatementAnalysis
 
     final private static Pattern primaryKeyPattern = Pattern.compile("PRIMARY KEY \\((.*?)\\)");
 
+    final private static Pattern primaryKeyPatternRear = Pattern.compile("(.*?)\\s(.*)\\sPRIMARY KEY");
+
     private List<String> columnNames;
 
     public CreateTableStatement(String statement) {
@@ -35,15 +37,7 @@ public class CreateTableStatement extends Statement implements StatementAnalysis
         content = content.trim().toUpperCase();
 
         // extract primary keys
-        matcher = primaryKeyPattern.matcher(content);
-        String primaryKeys = null;
-        while (matcher.find()) {
-            primaryKeys = matcher.group(1);
-        }
-        if (primaryKeys == null) {
-            System.out.println("Accessing primary keys fails.");
-            return;
-        }
+        String primaryKeys = matchPrimaryKey();
         primaryKey = new ArrayList<>();
         for (String pk : primaryKeys.split(",")) {
             primaryKey.add(pk);
@@ -51,6 +45,26 @@ public class CreateTableStatement extends Statement implements StatementAnalysis
 
         // extract column names
         matchColumnNames();
+    }
+
+    private String matchPrimaryKey() {
+        Matcher matcher = primaryKeyPattern.matcher(content);
+        String primaryKeys = null;
+        while (matcher.find()) {
+            primaryKeys = matcher.group(1);
+        }
+        if (primaryKeys != null) {
+            return primaryKeys;
+        }
+        for (String piece : content.split(",")) {
+            matcher = primaryKeyPatternRear.matcher(piece);
+            if (matcher.find()) {
+                primaryKeys = matcher.group(1);
+                return primaryKeys;
+            }
+        }
+        System.out.println("Accessing primary keys fails.");
+        return null;
     }
 
     private void matchColumnNames() {

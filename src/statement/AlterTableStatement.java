@@ -19,6 +19,8 @@ public class AlterTableStatement extends Statement implements StatementAnalysis 
 
     final private static Pattern referencedTableColumnPattern = Pattern.compile("REFERENCES (.*?)\\s\\((.*?)\\)");
 
+    final private static Pattern referencedTableColumnNoRefColumnPattern = Pattern.compile("REFERENCES (.*)");
+
     private ForeignKeyPair foreignKeyPair;
 
     public AlterTableStatement(String statement) {
@@ -39,11 +41,21 @@ public class AlterTableStatement extends Statement implements StatementAnalysis 
 
         Matcher foreignKeyMatcher = foreignKeyPattern.matcher(content);
         Matcher referencedMatcher = referencedTableColumnPattern.matcher(content);
+        Matcher referencedNoRefColumnMatcher = referencedTableColumnNoRefColumnPattern.matcher(content);
+        boolean foreignMatcher = foreignKeyPattern.matcher(content).find();
+        boolean referenceMatcher = referencedTableColumnPattern.matcher(content).find();
         // both match, which means the statement aims to add a foreign key.
-        if (foreignKeyMatcher.find()&&referencedMatcher.find()) {
+        if (foreignKeyMatcher.find()) {
             String foreignKey = foreignKeyMatcher.group(1);
-            String referencedTable = referencedMatcher.group(1);
-            String referencedColumn = referencedMatcher.group(2);
+            String referencedTable = null;
+            String referencedColumn = null;
+            if (referencedMatcher.find()) {
+            referencedTable = referencedMatcher.group(1);
+            referencedColumn = referencedMatcher.group(2);
+            } else if (referencedNoRefColumnMatcher.find()) {
+                referencedTable = referencedNoRefColumnMatcher.group(1);
+                String referencedCollumn = foreignKey;
+            }
             foreignKeyPair = new ForeignKeyPair(tableName+"."+foreignKey,
                     referencedTable+"."+referencedColumn);
         }

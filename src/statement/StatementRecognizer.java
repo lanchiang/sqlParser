@@ -12,11 +12,15 @@ public class StatementRecognizer {
 
     final private static Pattern alterTablePattern = Pattern.compile("ALTER TABLE .*");
 
+    final private static Pattern dropTablePattern = Pattern.compile("DROP TABLE .*");
+
     public Statement recognizeTheStatementFunction(String statement) {
         if (createTablePattern.matcher(statement).find()) {
             return new CreateTableStatement(statement);
         } else if (alterTablePattern.matcher(statement).find()) {
             return new AlterTableStatement(statement);
+        } else if (dropTablePattern.matcher(statement).find()) {
+            return null;
         }
         return null;
     }
