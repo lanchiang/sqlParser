@@ -8,9 +8,6 @@ import output.PrimaryKeyOutput;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sun.xml.internal.ws.dump.LoggingDumpTube.Position.After;
-import static com.sun.xml.internal.ws.dump.LoggingDumpTube.Position.Before;
-
 /**
  * PrimaryKeyOutput Tester.
  *

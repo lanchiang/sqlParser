@@ -33,7 +33,8 @@ public class StatementAnalysisPool {
             throw new NullPointerException("Input file path is not appointed!");
         }
         try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(inputFilePath));
+//            BufferedReader bufferedReader = new BufferedReader(new FileReader(inputFilePath));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(inputFilePath), "UTF-8"));
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 inputLines += line;
