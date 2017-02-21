@@ -18,6 +18,7 @@ public class DriveCode {
 
 //        String inputFilePath = "createImdb-withFKs.sql";
         String inputFilePath = "DB2_tables.sql";
+
         StatementAnalysisPool statementAnalysisPool = new StatementAnalysisPool(inputFilePath);
         statementAnalysisPool.processFile();
 
@@ -25,16 +26,14 @@ public class DriveCode {
         for (CreateTableStatement createTableStatement : createTableStatementList) {
             String tableName = createTableStatement.getTableName();
             PrimaryKeyOutput primaryKeyOutput = new PrimaryKeyOutput(createTableStatement.getColumnNames(),
-                    tableName, createTableStatement.getPrimaryKey(), tableName+"_primaryKey.csv");
+                    tableName, createTableStatement.getPrimaryKey(), tableName + "_primaryKey.csv");
             primaryKeyOutput.writeToFile();
         }
         List<AlterTableStatement> alterTableStatementList = statementAnalysisPool.getAlterTableStatementList();
         List<AlterTableStatement.ForeignKeyPair> foreignKeyPairs = alterTableStatementList.stream()
                 .map(AlterTableStatement::getForeignKeyPair).collect(Collectors.toList());
-        for (AlterTableStatement alterTableStatement : alterTableStatementList) {
-            ForeignKeyOutput foreignKeyOutput = new ForeignKeyOutput(statementAnalysisPool.getSchema(),
-                    foreignKeyPairs, inputFilePath+"_foreignKey.csv");
-            foreignKeyOutput.writeToFile();
-        }
+        ForeignKeyOutput foreignKeyOutput = new ForeignKeyOutput(statementAnalysisPool.getSchema(),
+                foreignKeyPairs, inputFilePath + "_foreignKey.csv");
+        foreignKeyOutput.writeToFile();
     }
 }

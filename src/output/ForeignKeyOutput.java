@@ -66,7 +66,6 @@ public class ForeignKeyOutput extends Output {
     public void printResultsInfo() throws IOException {
         bufferedWriter.write(resultsTitle);
         bufferedWriter.newLine();
-        String fkline = "";
         for (AlterTableStatement.ForeignKeyPair foreignKeyPair : foreignKeys) {
             String depColumn = foreignKeyPair.getDependentColumn();
             String refColumn = foreignKeyPair.getReferencedColumn();
@@ -77,7 +76,6 @@ public class ForeignKeyOutput extends Output {
     }
 
     public int getIndexOfColumn(String tableColumn) {
-        int index = columnIndex.get(tableColumn);
         return columnIndex.get(tableColumn);
     }
 

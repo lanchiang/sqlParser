@@ -34,7 +34,7 @@ public class StatementAnalysisPool {
         }
         try {
 //            BufferedReader bufferedReader = new BufferedReader(new FileReader(inputFilePath));
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(inputFilePath), "UTF-8"));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(inputFilePath), "ISO-8859-1"));
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 inputLines += line;
@@ -80,7 +80,7 @@ public class StatementAnalysisPool {
             schema = new HashMap<>();
         }
         if (!schema.containsKey(tableName)) {
-            schema.put(tableName, new HashMap<>());
+            schema.put(tableName, new LinkedHashMap<>());
         }
         int count = 1;
         for (String columnName : createTableStatement.getColumnNames()) {

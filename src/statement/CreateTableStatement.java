@@ -70,7 +70,8 @@ public class CreateTableStatement extends Statement implements StatementAnalysis
     private void matchColumnNames() {
         columnNames = new ArrayList<>();
         Matcher matcher;
-        for (String part : content.split(",")) {
+        String pureColumnContent = content.replaceAll("PRIMARY KEY \\((.*?)\\)", "").trim();
+        for (String part : pureColumnContent.split(",")) {
             part = part.trim();
             matcher = primaryKeyPattern.matcher(part);
             // if match, it means this part do not indicate a column.

@@ -54,7 +54,7 @@ public class AlterTableStatement extends Statement implements StatementAnalysis 
             referencedColumn = referencedMatcher.group(2);
             } else if (referencedNoRefColumnMatcher.find()) {
                 referencedTable = referencedNoRefColumnMatcher.group(1);
-                String referencedCollumn = foreignKey;
+                referencedColumn = foreignKey;
             }
             foreignKeyPair = new ForeignKeyPair(tableName+"."+foreignKey,
                     referencedTable+"."+referencedColumn);

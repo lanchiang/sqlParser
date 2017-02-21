@@ -1,8 +1,6 @@
 package output;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * @author Lan Jiang
@@ -23,7 +21,8 @@ abstract public class Output implements OutputHandler {
     protected void openBufferedWriter() throws IOException {
         if (outputPath==null)
             throw new NullPointerException("The output path can not be found!");
-        bufferedWriter = new BufferedWriter(new FileWriter(outputPath));
+//        bufferedWriter = new BufferedWriter(new FileWriter(outputPath));
+        bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputPath), "utf-8"));
     }
 
     protected void closeBufferedWriter() throws IOException {
