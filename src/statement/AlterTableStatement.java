@@ -42,16 +42,14 @@ public class AlterTableStatement extends Statement implements StatementAnalysis 
         Matcher foreignKeyMatcher = foreignKeyPattern.matcher(content);
         Matcher referencedMatcher = referencedTableColumnPattern.matcher(content);
         Matcher referencedNoRefColumnMatcher = referencedTableColumnNoRefColumnPattern.matcher(content);
-        boolean foreignMatcher = foreignKeyPattern.matcher(content).find();
-        boolean referenceMatcher = referencedTableColumnPattern.matcher(content).find();
         // both match, which means the statement aims to add a foreign key.
         if (foreignKeyMatcher.find()) {
             String foreignKey = foreignKeyMatcher.group(1);
             String referencedTable = null;
             String referencedColumn = null;
             if (referencedMatcher.find()) {
-            referencedTable = referencedMatcher.group(1);
-            referencedColumn = referencedMatcher.group(2);
+                referencedTable = referencedMatcher.group(1);
+                referencedColumn = referencedMatcher.group(2);
             } else if (referencedNoRefColumnMatcher.find()) {
                 referencedTable = referencedNoRefColumnMatcher.group(1);
                 referencedColumn = foreignKey;
